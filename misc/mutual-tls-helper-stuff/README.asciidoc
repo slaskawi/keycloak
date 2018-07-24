@@ -1,0 +1,49 @@
+== Mutual TLS helper utilities
+
+This directory contains a set of utilities and scripts for testing Mutual TLS for Clients and User Authentication.
+
+Note: This directory will be removed once Mutual TLS for Clients implementation is done.
+
+
+=== Content
+
+* `create_certs.sh` - Creates Keystore and Trustore for both the server and the client (in many different formats)
+* `realm-export.json` - Exported realm for testing user Authentication
+* `standalone.xml` - Server configuration XML for Mutual TLS
+
+=== Testing User Authentication with Mutual TLS
+
+1. Fire `create_certs.sh` and copy all files into `$KEYCLOAK_HOME/standalone/configuration`
+2. Copy `standalone.xml` into `$KEYCLOAK_HOME/standalone/configuration`
+3. Import the realm (`realm-export.json`)
+4. Create a new user called `seb` with password `seb` and an attribute `usercertificate` equal to `localhost`
+5. Use Direct Grant Flow and CURL for testing (see below)
+
+==== Mutual TLS steps
+
+Just as a reminder, Mutual TLS has the following phases:
+
+1. Client says hello
+2. Server says hello and sends its certificate and requests client to send his
+3. Client validates server's certificate and sends his own
+4. Server verifies client's certificate
+
+Of course, there's a lot more going on... but more or less this is how it looks like when taking only certificates into account.
+
+==== CURL commands
+
+The basic command looks like the following (invoke this after `./create_certs.sh`):
+
+```
+ curl --cacert server-cert.pem --cert client-keystore.p12 -v --data "client_id=x509client&username=seb&password=seb&grant_type=password" https://localhost:8443/auth/realms/master/protocol/openid-connect/token | jq
+```
+
+Switches:
+
+* `--cacert server-cert.pem` - CURL trusts server certificate
+* `--cert client-keystore.p12` - CURL uses client's private key to encrypt the data
+* `client_id=x509client&username=seb&password=seb&grant_type=password` - in most of the cases, username and password in not necessary. Just play a bit with those...
+
+==== How x509 validator works (in short)
+
+The `ValidateX509CertificateUsername` instance checks if there's a user in DB which has `usercertificate` attribute set to Subject DN of the client certificate.
