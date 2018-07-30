@@ -588,9 +588,4 @@
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
     </socket-binding-group>
-    <deployments>
-        <deployment name="user-storage-properties-example.jar" runtime-name="user-storage-properties-example.jar">
-            <content sha1="49228ac1fc6ffb3a225039aa6a2fbe4be4e6910f"/>
-        </deployment>
-    </deployments>
 </server>
