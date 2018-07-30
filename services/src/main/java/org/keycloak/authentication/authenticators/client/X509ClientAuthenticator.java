@@ -1,5 +1,7 @@
 package org.keycloak.authentication.authenticators.client;
 
+import org.keycloak.OAuth2Constants;
+import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.ClientAuthenticationFlowContext;
 import org.keycloak.models.AuthenticationExecutionModel;
 import org.keycloak.models.ClientModel;
@@ -9,6 +11,9 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.services.ServicesLogger;
 import org.keycloak.services.x509.X509ClientCertificateLookup;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -25,6 +30,43 @@ public class X509ClientAuthenticator extends AbstractClientAuthenticator {
 
     @Override
     public void authenticateClient(ClientAuthenticationFlowContext context) {
+
+        String client_id = null;
+        MediaType mediaType = context.getHttpRequest().getHttpHeaders().getMediaType();
+        boolean hasFormData = mediaType != null && mediaType.isCompatible(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+
+        MultivaluedMap<String, String> formData = hasFormData ? context.getHttpRequest().getDecodedFormParameters() : null;
+        MultivaluedMap<String, String> queryParams = context.getHttpRequest().getUri().getQueryParameters();
+
+        if (formData != null) {
+            client_id = formData.getFirst(OAuth2Constants.CLIENT_ID);
+        }
+
+        if (client_id == null) {
+            if (queryParams != null) {
+                client_id = queryParams.getFirst(OAuth2Constants.CLIENT_ID);
+            } else {
+                Response challengeResponse = ClientAuthUtil.errorResponse(Response.Status.BAD_REQUEST.getStatusCode(), "invalid_client", "Missing client_id parameter");
+                context.challenge(challengeResponse);
+                return;
+            }
+        }
+
+        context.getEvent().client(client_id);
+
+        ClientModel client = context.getRealm().getClientByClientId(client_id);
+        if (client == null) {
+            context.failure(AuthenticationFlowError.CLIENT_NOT_FOUND, null);
+            return;
+        }
+
+        context.setClient(client);
+
+        if (!client.isEnabled()) {
+            context.failure(AuthenticationFlowError.CLIENT_DISABLED, null);
+            return;
+        }
+
         X509ClientCertificateLookup provider = context.getSession().getProvider(X509ClientCertificateLookup.class);
         if (provider == null) {
             logger.errorv("\"{0}\" Spi is not available, did you forget to update the configuration?",
@@ -47,6 +89,8 @@ public class X509ClientAuthenticator extends AbstractClientAuthenticator {
             context.attempted();
             return;
         }
+
+        //TODO: additional checks needed ? 
 
         context.success();
     }
