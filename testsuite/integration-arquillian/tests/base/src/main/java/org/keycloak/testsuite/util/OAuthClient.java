@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -74,6 +75,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 
@@ -142,6 +145,8 @@ public class OAuthClient {
     private String codeChallenge;
     private String codeChallengeMethod;
     private String origin;
+
+    private Supplier<CloseableHttpClient> httpClient = OAuthClient::newCloseableHttpClient;
 
     public class LogoutUrlBuilder {
         private final UriBuilder b = OIDCLoginProtocolService.logoutUrl(UriBuilder.fromUri(baseUrl));
@@ -241,7 +246,12 @@ public class OAuthClient {
         fillLoginForm(username, password);
     }
 
-    private static CloseableHttpClient newCloseableHttpClient() {
+    public OAuthClient httpClient(Supplier<CloseableHttpClient> client) {
+        this.httpClient = client;
+        return this;
+    }
+
+    public static CloseableHttpClient newCloseableHttpClient() {
         if (sslRequired) {
             KeyStore keystore = null;
             // load the keystore containing the client certificate - keystore type is probably jks or pkcs12
@@ -272,7 +282,7 @@ public class OAuthClient {
     }
 
     public CloseableHttpResponse doPreflightRequest() {
-        try (CloseableHttpClient client = newCloseableHttpClient()) {
+        try (CloseableHttpClient client = httpClient.get()) {
             HttpOptions options = new HttpOptions(getAccessTokenUrl());
             options.setHeader("Origin", "http://example.com");
 
@@ -284,7 +294,7 @@ public class OAuthClient {
 
     // KEYCLOAK-6771 Certificate Bound Token
     public AccessTokenResponse doAccessTokenRequest(String code, String password) {
-        try (CloseableHttpClient client = newCloseableHttpClient()) {
+        try (CloseableHttpClient client = httpClient.get()) {
             return doAccessTokenRequest(code, password, client);
         }  catch (IOException ioe) {
             throw new RuntimeException(ioe);
@@ -396,7 +406,7 @@ public class OAuthClient {
 
     public AccessTokenResponse doGrantAccessTokenRequest(String realm, String username, String password, String totp,
                                                          String clientId, String clientSecret) throws Exception {
-        try (CloseableHttpClient client = newCloseableHttpClient()) {
+        try (CloseableHttpClient client = httpClient.get()) {
             HttpPost post = new HttpPost(getResourceOwnerPasswordCredentialGrantUrl(realm));
 
             List<NameValuePair> parameters = new LinkedList<>();
@@ -442,7 +452,7 @@ public class OAuthClient {
 
     public AccessTokenResponse doTokenExchange(String realm, String token, String targetAudience,
                                                String clientId, String clientSecret) throws Exception {
-        try (CloseableHttpClient client = newCloseableHttpClient()) {
+        try (CloseableHttpClient client = httpClient.get()) {
             HttpPost post = new HttpPost(getResourceOwnerPasswordCredentialGrantUrl(realm));
 
             List<NameValuePair> parameters = new LinkedList<>();
@@ -482,7 +492,7 @@ public class OAuthClient {
     }
 
     public AccessTokenResponse doTokenExchange(String realm, String clientId, String clientSecret, Map<String, String> params) throws Exception {
-        try (CloseableHttpClient client = newCloseableHttpClient()) {
+        try (CloseableHttpClient client = httpClient.get()) {
             HttpPost post = new HttpPost(getResourceOwnerPasswordCredentialGrantUrl(realm));
 
             List<NameValuePair> parameters = new LinkedList<>();

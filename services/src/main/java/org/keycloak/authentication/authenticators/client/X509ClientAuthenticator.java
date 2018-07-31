@@ -30,7 +30,6 @@ public class X509ClientAuthenticator extends AbstractClientAuthenticator {
 
     @Override
     public void authenticateClient(ClientAuthenticationFlowContext context) {
-
         String client_id = null;
         MediaType mediaType = context.getHttpRequest().getHttpHeaders().getMediaType();
         boolean hasFormData = mediaType != null && mediaType.isCompatible(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
@@ -89,8 +88,6 @@ public class X509ClientAuthenticator extends AbstractClientAuthenticator {
             context.attempted();
             return;
         }
-
-        //TODO: additional checks needed ? 
 
         context.success();
     }
