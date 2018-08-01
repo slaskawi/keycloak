@@ -5,7 +5,7 @@ function run-server-tests() {
     mvn install -B -nsu -Pauth-server-wildfly -DskipTests
 
     cd tests/base
-    mvn test -B -nsu -Pauth-server-wildfly -Dtest=$1 2>&1 | java -cp ../../../utils/target/classes org.keycloak.testsuite.LogTrimmer
+    mvn test -B -nsu -Pauth-server-wildfly -Dtest=$1 $2 2>&1 | java -cp ../../../utils/target/classes org.keycloak.testsuite.LogTrimmer
     exit ${PIPESTATUS[0]}
 }
 
@@ -72,6 +72,10 @@ fi
 
 if [ $1 == "server-group4" ]; then
     run-server-tests org.keycloak.testsuite.k*.**.*Test,org.keycloak.testsuite.m*.**.*Test,org.keycloak.testsuite.o*.**.*Test,org.keycloak.testsuite.s*.**.*Test
+fi
+
+if [ $1 == "ssl" ]; then
+    run-server-tests org.keycloak.testsuite.client.MutualTLSClientTest,org.keycloak.testsuite.hok.HoKTest "-Dauth.server.ssl.required -Dbrowser=phantomjs"
 fi
 
 if [ $1 == "crossdc" ]; then

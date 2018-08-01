@@ -16,6 +16,7 @@ env:
     - TESTS=server-group4
     - TESTS=old
     - TESTS=crossdc
+    - TESTS=ssl
 
 jdk:
   - oraclejdk8

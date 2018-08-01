@@ -1,7 +1,5 @@
 package org.keycloak.testsuite.client;
 
-import static org.junit.Assume.assumeTrue;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
