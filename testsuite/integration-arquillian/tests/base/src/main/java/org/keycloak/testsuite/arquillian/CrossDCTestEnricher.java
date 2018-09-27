@@ -37,6 +37,7 @@ import static org.junit.Assert.assertThat;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.models.Constants;
 import org.keycloak.testsuite.arquillian.annotation.InitialDcState;
+import org.keycloak.testsuite.arquillian.undertow.TLSUtils;
 import org.keycloak.testsuite.auth.page.AuthRealm;
 import org.keycloak.testsuite.client.KeycloakTestingClient;
 import org.keycloak.testsuite.crossdc.DC;
@@ -219,7 +220,7 @@ public class CrossDCTestEnricher {
 
     private static Keycloak createAdminClientFor(ContainerInfo node) {
         log.info("--DC: Initializing admin client for " + node.getContextRoot() + "/auth");
-        return Keycloak.getInstance(node.getContextRoot() + "/auth", AuthRealm.MASTER, AuthRealm.ADMIN, AuthRealm.ADMIN, Constants.ADMIN_CLI_CLIENT_ID);
+        return Keycloak.getInstance(node.getContextRoot() + "/auth", AuthRealm.MASTER, AuthRealm.ADMIN, AuthRealm.ADMIN, Constants.ADMIN_CLI_CLIENT_ID, TLSUtils.initializeTLS());
     }
     
     private static KeycloakTestingClient createTestingClientFor(ContainerInfo node) {

@@ -58,6 +58,7 @@ public class DeploymentArchiveProcessorUtils {
     public static final String JBOSS_DEPLOYMENT_XML_PATH = "/WEB-INF/jboss-deployment-structure.xml";
     public static final String SAML_ADAPTER_CONFIG_PATH_TENANT1 = "/WEB-INF/classes/tenant1-keycloak-saml.xml";
     public static final String SAML_ADAPTER_CONFIG_PATH_TENANT2 = "/WEB-INF/classes/tenant2-keycloak-saml.xml";
+    public static final String TRUSTSTORE_PASSWORD = "secret";
 
     /**
      * @return true iff archive's name equals run-on-server-classes.war
@@ -193,6 +194,19 @@ public class DeploymentArchiveProcessorUtils {
 
             if (APP_SERVER_SSL_REQUIRED) {
                 adapterConfig.setSslRequired("all");
+            }
+
+            if (AUTH_SERVER_SSL_REQUIRED) {
+                String trustStorePathInDeployment = "keycloak.truststore";
+                if (adapterConfigPath.contains("WEB-INF")) {
+                    // This is a Java adapter, we can use classpath
+                    trustStorePathInDeployment = "classpath:keycloak.truststore";
+                }
+                adapterConfig.setTruststore(trustStorePathInDeployment);
+                adapterConfig.setTruststorePassword(TRUSTSTORE_PASSWORD);
+                File truststorePath = new File(DeploymentArchiveProcessorUtils.class.getResource("/keystore/keycloak.truststore").getFile());
+                ((WebArchive) archive).addAsResource(truststorePath);
+                log.debugf("Adding Truststore to the deployment, path %s, password %s, adapter path %s", truststorePath.getAbsolutePath(), TRUSTSTORE_PASSWORD, trustStorePathInDeployment);
             }
 
             archive.add(new StringAsset(JsonSerialization.writeValueAsPrettyString(adapterConfig)),

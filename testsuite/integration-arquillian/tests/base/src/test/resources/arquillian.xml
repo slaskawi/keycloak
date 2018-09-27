@@ -103,6 +103,7 @@
             <property name="bindAddress">0.0.0.0</property>
             <property name="adapterImplClass">org.keycloak.testsuite.arquillian.undertow.KeycloakOnUndertow</property>
             <property name="bindHttpPort">${auth.server.http.port}</property>
+            <property name="bindHttpsPort">${auth.server.https.port}</property>
             <property name="remoteMode">${undertow.remote}</property>
         </configuration>
     </container>
@@ -201,7 +202,9 @@
                 <property name="adapterImplClass">org.keycloak.testsuite.arquillian.undertow.KeycloakOnUndertow</property>
                 <property name="bindAddress">localhost</property>
                 <property name="bindHttpPort">${auth.server.http.port}</property>
+                <property name="bindHttpsPort">${auth.server.https.port}</property>
                 <property name="bindHttpPortOffset">1</property>
+                <property name="bindHttpsPortOffset">1</property>
                 <property name="route">node1</property>
                 <property name="remoteMode">${undertow.remote}</property>
                 <property name="keycloakConfigPropertyOverrides">{
@@ -218,7 +221,9 @@
                 <property name="adapterImplClass">org.keycloak.testsuite.arquillian.undertow.KeycloakOnUndertow</property>
                 <property name="bindAddress">localhost</property>
                 <property name="bindHttpPort">${auth.server.http.port}</property>
+                <property name="bindHttpsPort">${auth.server.https.port}</property>
                 <property name="bindHttpPortOffset">2</property>
+                <property name="bindHttpsPortOffset">2</property>
                 <property name="route">node2</property>
                 <property name="remoteMode">${undertow.remote}</property>
                 <property name="keycloakConfigPropertyOverrides">{
@@ -236,6 +241,7 @@
                 <property name="adapterImplClass">org.keycloak.testsuite.arquillian.undertow.lb.SimpleUndertowLoadBalancerContainer</property>
                 <property name="bindAddress">localhost</property>
                 <property name="bindHttpPort">${auth.server.http.port}</property>
+                <property name="bindHttpsPort">${auth.server.https.port}</property>
                 <property name="nodes">node1=http://localhost:8181,node2=http://localhost:8182</property>
             </configuration>
         </container>
@@ -340,7 +346,9 @@
                 <property name="adapterImplClass">org.keycloak.testsuite.arquillian.undertow.KeycloakOnUndertow</property>
                 <property name="bindAddress">localhost</property>
                 <property name="bindHttpPort">${auth.server.http.port}</property>
+                <property name="bindHttpsPort">${auth.server.https.port}</property>
                 <property name="bindHttpPortOffset">-78</property>
+                <property name="bindHttpsPortOffset">-78</property>
                 <property name="remoteMode">${undertow.remote}</property>
                 <property name="dataCenter">0</property>
                 <property name="keycloakConfigPropertyOverrides">{
@@ -365,7 +373,9 @@
                 <property name="adapterImplClass">org.keycloak.testsuite.arquillian.undertow.KeycloakOnUndertow</property>
                 <property name="bindAddress">localhost</property>
                 <property name="bindHttpPort">${auth.server.http.port}</property>
+                <property name="bindHttpsPort">${auth.server.https.port}</property>
                 <property name="bindHttpPortOffset">-69</property>
+                <property name="bindHttpsPortOffset">-69</property>
                 <property name="remoteMode">${undertow.remote}</property>
                 <property name="dataCenter">1</property>
                 <property name="keycloakConfigPropertyOverrides">{
@@ -389,7 +399,9 @@
                 <property name="adapterImplClass">org.keycloak.testsuite.arquillian.undertow.KeycloakOnUndertow</property>
                 <property name="bindAddress">localhost</property>
                 <property name="bindHttpPort">${auth.server.http.port}</property>
+                <property name="bindHttpsPort">${auth.server.https.port}</property>
                 <property name="bindHttpPortOffset">-68</property>
+                <property name="bindHttpsPortOffset">-68</property>
                 <property name="remoteMode">${undertow.remote}</property>
                 <property name="dataCenter">1</property>
                 <property name="keycloakConfigPropertyOverrides">{
@@ -432,6 +444,7 @@
                 </property>
                 <property name="managementPort">${auth.server.crossdc01.management.port}</property>
                 <property name="bindHttpPortOffset">-79</property>
+                <property name="bindHttpsPortOffset">-79</property>
                 <property name="dataCenter">0</property>
                 <property name="startupTimeoutInSeconds">${auth.server.jboss.startup.timeout}</property>
             </configuration>
@@ -461,6 +474,7 @@
                 </property>
                 <property name="managementPort">${auth.server.crossdc02.management.port}</property>
                 <property name="bindHttpPortOffset">-78</property>
+                <property name="bindHttpsPortOffset">-78</property>
                 <property name="dataCenter">0</property>
                 <property name="startupTimeoutInSeconds">${auth.server.jboss.startup.timeout}</property>
             </configuration>
@@ -491,6 +505,7 @@
                 </property>
                 <property name="managementPort">${auth.server.crossdc11.management.port}</property>
                 <property name="bindHttpPortOffset">-69</property>
+                <property name="bindHttpsPortOffset">-69</property>
                 <property name="dataCenter">1</property>
                 <property name="startupTimeoutInSeconds">${auth.server.jboss.startup.timeout}</property>
             </configuration>
@@ -520,6 +535,7 @@
                 </property>
                 <property name="managementPort">${auth.server.crossdc12.management.port}</property>
                 <property name="bindHttpPortOffset">-68</property>
+                <property name="bindHttpsPortOffset">-68</property>
                 <property name="dataCenter">1</property>
                 <property name="startupTimeoutInSeconds">${auth.server.jboss.startup.timeout}</property>
             </configuration>
