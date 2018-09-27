@@ -488,7 +488,7 @@ public class AccessTokenTest extends AbstractKeycloakTest {
             }
 
             Response response = executeGrantAccessTokenRequest(grantTarget);
-            assertEquals(403, response.getStatus());
+            assertEquals(AUTH_SERVER_SSL_REQUIRED ? 200 : 403, response.getStatus());
             response.close();
 
             {
@@ -704,7 +704,7 @@ public class AccessTokenTest extends AbstractKeycloakTest {
 
         {
             Response response = executeGrantRequest(grantTarget, "no-permissions", "password");
-            assertEquals(200, response.getStatus());
+            assertEquals(AUTH_SERVER_SSL_REQUIRED ? 403 : 200, response.getStatus());
             org.keycloak.representations.AccessTokenResponse tokenResponse = response.readEntity(org.keycloak.representations.AccessTokenResponse.class);
             AccessToken accessToken = getAccessToken(tokenResponse);
             assertEquals(accessToken.getRealmAccess().getRoles().size(), 1);
@@ -932,7 +932,7 @@ public class AccessTokenTest extends AbstractKeycloakTest {
         adminClient.realm("test").clients().create(ClientBuilder.create()
                 .clientId("sample-public-client")
                 .authenticatorType("client-secret")
-                .redirectUris("http://localhost:8180/auth/realms/master/app/*")
+                .redirectUris(oauth.getRedirectUri() + "/*")
                 .publicClient()
                 .build());
 

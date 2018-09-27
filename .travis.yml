@@ -16,7 +16,6 @@ env:
     - TESTS=old
     - TESTS=crossdc-server
     - TESTS=crossdc-adapter
-    - TESTS=ssl
 
 jdk:
   - oraclejdk8

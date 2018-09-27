@@ -38,6 +38,7 @@ import org.keycloak.common.util.Time;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.RequiredActionProviderRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.services.resources.account.AccountFormService;
 import org.keycloak.testsuite.admin.ApiUtil;
 import org.keycloak.testsuite.arquillian.AuthServerTestEnricher;
 import org.keycloak.testsuite.arquillian.KcArquillian;
@@ -70,7 +71,17 @@ import org.wildfly.extras.creaper.core.online.operations.Operations;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.UriBuilder;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -79,6 +90,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -98,6 +110,8 @@ import static org.keycloak.testsuite.util.URLUtils.navigateToUri;
 public abstract class AbstractKeycloakTest {
 
     protected static final boolean AUTH_SERVER_SSL_REQUIRED = Boolean.parseBoolean(System.getProperty("auth.server.ssl.required", "false"));
+    protected static final String AUTH_SERVER_SCHEME = AUTH_SERVER_SSL_REQUIRED ? "https" : "http";
+    protected static final String AUTH_SERVER_PORT = AUTH_SERVER_SSL_REQUIRED ? System.getProperty("auth.server.https.port", "8543") : System.getProperty("auth.server.http.port", "8180");
 
     protected static final String ENGLISH_LOCALE_NAME = "English";
 
@@ -144,13 +158,6 @@ public abstract class AbstractKeycloakTest {
     private PropertiesConfiguration constantsProperties;
 
     private boolean resetTimeOffset;
-
-    @BeforeClass
-    public static void setUpAuthServer() throws Exception {
-        if (AUTH_SERVER_SSL_REQUIRED) {
-            enableHTTPSForAuthServer();
-        }
-    }
 
     @Before
     public void beforeAbstractKeycloakTest() throws Exception {
@@ -536,28 +543,31 @@ public abstract class AbstractKeycloakTest {
         return log;
     }
 
-    private static void enableHTTPSForAuthServer() throws IOException, CommandFailedException, TimeoutException, InterruptedException, CliException, OperationException {
-        OnlineManagementClient client = AuthServerTestEnricher.getManagementClient();
-        Administration administration = new Administration(client);
-        Operations operations = new Operations(client);
+    protected String getAccountRedirectUrl(String realm) {
+        return AccountFormService
+              .loginRedirectUrl(UriBuilder.fromUri(oauth.AUTH_SERVER_ROOT))
+              .build(realm)
+              .toString();
+    }
 
-        if(!operations.exists(Address.coreService("management").and("security-realm", "UndertowRealm"))) {
-            client.execute("/core-service=management/security-realm=UndertowRealm:add()");
-            client.execute("/core-service=management/security-realm=UndertowRealm/server-identity=ssl:add(keystore-relative-to=jboss.server.config.dir,keystore-password=secret,keystore-path=keycloak.jks");
-            client.execute("/core-service=management/security-realm=UndertowRealm/authentication=truststore:add(keystore-relative-to=jboss.server.config.dir,keystore-password=secret,keystore-path=keycloak.truststore");
+    protected String getAccountRedirectUrl() {
+        return getAccountRedirectUrl("test");
+    }
+
+    protected static InputStream httpsAwareConfigurationStream(InputStream input) throws IOException {
+        if (!AUTH_SERVER_SSL_REQUIRED) {
+            return input;
         }
-
-        client.apply(new RemoveUndertowListener.Builder(UndertowListenerType.HTTPS_LISTENER, "https")
-                .forDefaultServer());
-
-        administration.reloadIfRequired();
-
-        client.apply(new AddUndertowListener.HttpsBuilder("https", "default-server", "https")
-                .securityRealm("UndertowRealm")
-                .verifyClient(SslVerifyClient.REQUESTED)
-                .build());
-
-        administration.reloadIfRequired();
-        client.close();
+        PipedInputStream in = new PipedInputStream();
+        final PipedOutputStream out = new PipedOutputStream(in);
+        try (PrintWriter pw = new PrintWriter(out)) {
+            try (Scanner s = new Scanner(input)) {
+                while (s.hasNextLine()) {
+                    String lineWithReplaces = s.nextLine().replace("http://localhost:8180/auth", AUTH_SERVER_SCHEME + "://localhost:" + AUTH_SERVER_PORT + "/auth");
+                    pw.println(lineWithReplaces);
+                }
+            }
+        }
+        return in;
     }
 }

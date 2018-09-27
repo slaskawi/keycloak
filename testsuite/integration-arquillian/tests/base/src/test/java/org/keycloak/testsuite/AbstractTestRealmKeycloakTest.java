@@ -29,6 +29,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.testsuite.util.OAuthClient;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.keycloak.testsuite.admin.AbstractAdminTest.loadJson;
@@ -71,6 +72,45 @@ public abstract class AbstractTestRealmKeycloakTest extends AbstractKeycloakTest
         testRealms.add(testRealm);
 
         configureTestRealm(testRealm);
+
+        if (modifyRealmForSSL()) {
+            if (AUTH_SERVER_SSL_REQUIRED) {
+                log.debug("Modifying testrealm.json for SSL");
+                for (ClientRepresentation cr : testRealm.getClients()) {
+                    cr.setBaseUrl(replaceHttpValuesWithHttps(cr.getBaseUrl()));
+                    cr.setAdminUrl(replaceHttpValuesWithHttps(cr.getAdminUrl()));
+                    if (cr.getRedirectUris() != null && cr.getRedirectUris().size() > 0) {
+                        List<String> redirectUrls = cr.getRedirectUris();
+                        List<String> fixedRedirectUrls = new ArrayList<>(redirectUrls.size());
+                        for (String url : redirectUrls) {
+                            fixedRedirectUrls.add(replaceHttpValuesWithHttps(url));
+                        }
+                        cr.setRedirectUris(fixedRedirectUrls);
+                    }
+                }
+            }
+        }
+    }
+
+    private String replaceHttpValuesWithHttps(String input) {
+        if (input == null) {
+            return null;
+        }
+        if ("".equals(input)) {
+            return "";
+        }
+        return input
+              .replace("http", "https")
+              .replace("8080", "8543")
+              .replace("8180", "8543");
+    }
+
+    /**
+     * @return Return <code>true</code> if you wish to automatically post-process realm and replace
+     * all http values with https (and correct ports).
+     */
+    protected boolean modifyRealmForSSL() {
+        return false;
     }
 
 

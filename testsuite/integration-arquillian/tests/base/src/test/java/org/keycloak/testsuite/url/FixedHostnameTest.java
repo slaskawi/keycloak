@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.keycloak.client.registration.Auth;
 import org.keycloak.client.registration.ClientRegistration;
@@ -39,12 +40,9 @@ public class FixedHostnameTest extends AbstractKeycloakTest {
 
     String authServerUrl;
 
-    String suiteScheme;
-
     @Before
     public void before() throws URISyntaxException {
-        suiteScheme = suiteContext.getAuthServerInfo().getContextRoot().toURI().getScheme();
-        authServerUrl = suiteContext.getAuthServerInfo().getContextRoot() + "/auth";
+        authServerUrl = oauth.AUTH_SERVER_ROOT;
     }
 
     @Override
@@ -66,57 +64,59 @@ public class FixedHostnameTest extends AbstractKeycloakTest {
         oauth.clientId("direct-grant");
 
         try {
-            assertWellKnown("test", suiteScheme + "://localhost:8180");
+            assertWellKnown("test", AUTH_SERVER_SCHEME + "://localhost:" + AUTH_SERVER_PORT);
 
             configureFixedHostname(-1, -1, false);
 
-            assertWellKnown("test", suiteScheme + "://keycloak.127.0.0.1.nip.io:8180");
-            assertWellKnown("hostname", suiteScheme + "://custom-domain.127.0.0.1.nip.io:8180");
+            assertWellKnown("test", AUTH_SERVER_SCHEME + "://keycloak.127.0.0.1.nip.io:" + AUTH_SERVER_PORT);
+            assertWellKnown("hostname", AUTH_SERVER_SCHEME + "://custom-domain.127.0.0.1.nip.io:" + AUTH_SERVER_PORT);
 
-            assertTokenIssuer("test", suiteScheme + "://keycloak.127.0.0.1.nip.io:8180");
-            assertTokenIssuer("hostname", suiteScheme + "://custom-domain.127.0.0.1.nip.io:8180");
+            assertTokenIssuer("test", AUTH_SERVER_SCHEME + "://keycloak.127.0.0.1.nip.io:" + AUTH_SERVER_PORT);
+            assertTokenIssuer("hostname", AUTH_SERVER_SCHEME + "://custom-domain.127.0.0.1.nip.io:" + AUTH_SERVER_PORT);
 
-            assertInitialAccessTokenFromMasterRealm("test", suiteScheme + "://keycloak.127.0.0.1.nip.io:8180");
-            assertInitialAccessTokenFromMasterRealm("hostname", suiteScheme + "://custom-domain.127.0.0.1.nip.io:8180");
+            assertInitialAccessTokenFromMasterRealm("test", AUTH_SERVER_SCHEME + "://keycloak.127.0.0.1.nip.io:" + AUTH_SERVER_PORT);
+            assertInitialAccessTokenFromMasterRealm("hostname", AUTH_SERVER_SCHEME + "://custom-domain.127.0.0.1.nip.io:" + AUTH_SERVER_PORT);
         } finally {
             clearFixedHostname();
         }
     }
 
     @Test
+    @Ignore("KEYCLOAK-8659")
     public void fixedHttpPort() throws Exception {
         // Make sure request are always sent with http
-        authServerUrl = authServerUrl.replace("https://", "http://");
+        authServerUrl = authServerUrl.replace("https://", "http://").replace(":8543", "");
 
         oauth.clientId("direct-grant");
 
         try {
-            assertWellKnown("test", suiteScheme + "://localhost:8180");
+            assertWellKnown("test", AUTH_SERVER_SCHEME + "://localhost:" + AUTH_SERVER_PORT);
 
             configureFixedHostname(80, -1, false);
 
-            assertWellKnown("test", suiteScheme + "://keycloak.127.0.0.1.nip.io");
-            assertWellKnown("hostname", suiteScheme + "://custom-domain.127.0.0.1.nip.io");
+            assertWellKnown("test", "http://keycloak.127.0.0.1.nip.io");
+            assertWellKnown("hostname", "http://custom-domain.127.0.0.1.nip.io");
 
-            assertTokenIssuer("test", suiteScheme + "://keycloak.127.0.0.1.nip.io");
-            assertTokenIssuer("hostname", suiteScheme + "://custom-domain.127.0.0.1.nip.io");
+            assertTokenIssuer("test", "http://keycloak.127.0.0.1.nip.io");
+            assertTokenIssuer("hostname", "http://custom-domain.127.0.0.1.nip.io");
 
-            assertInitialAccessTokenFromMasterRealm("test", suiteScheme + "://keycloak.127.0.0.1.nip.io");
-            assertInitialAccessTokenFromMasterRealm("hostname", suiteScheme + "://custom-domain.127.0.0.1.nip.io");
+            assertInitialAccessTokenFromMasterRealm("test", "http://keycloak.127.0.0.1.nip.io");
+            assertInitialAccessTokenFromMasterRealm("hostname", "http://custom-domain.127.0.0.1.nip.io");
         } finally {
             clearFixedHostname();
         }
     }
 
     @Test
+    @Ignore("KEYCLOAK-8659")
     public void fixedHostnameAlwaysHttpsHttpsPort() throws Exception {
         // Make sure request are always sent with http
-        authServerUrl = authServerUrl.replace("https://", "http://");
+        authServerUrl = authServerUrl.replace("https://", "http://").replace(":8543", "");;
 
         oauth.clientId("direct-grant");
 
         try {
-            assertWellKnown("test", suiteScheme + "://localhost:8180");
+            assertWellKnown("test", AUTH_SERVER_SCHEME + "://localhost:" + AUTH_SERVER_PORT);
 
             configureFixedHostname(-1, 443, true);
 
