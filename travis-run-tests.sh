@@ -2,10 +2,10 @@
 
 function run-server-tests() {
     cd testsuite/integration-arquillian
-    mvn install -B -nsu -Pauth-server-wildfly -DskipTests
+    mvn install -Dauth.server.ssl.required=false -B -nsu -Pauth-server-wildfly -DskipTests
 
     cd tests/base
-    mvn test -B -nsu -Pauth-server-wildfly -Dtest=$1 $2 2>&1 | java -cp ../../../utils/target/classes org.keycloak.testsuite.LogTrimmer
+    mvn test -Dauth.server.ssl.required=false -B -nsu -Pauth-server-wildfly -Dtest=$1 $2 2>&1 | java -cp ../../../utils/target/classes org.keycloak.testsuite.LogTrimmer
     exit ${PIPESTATUS[0]}
 }
 
@@ -82,20 +82,20 @@ fi
 
 if [ $1 == "crossdc-server" ]; then
     cd testsuite/integration-arquillian
-    mvn install -B -nsu -Pauth-servers-crossdc-jboss,auth-server-wildfly,cache-server-infinispan -DskipTests
+    mvn install -Dauth.server.ssl.required=false -B -nsu -Pauth-servers-crossdc-jboss,auth-server-wildfly,cache-server-infinispan -DskipTests
 
     cd tests/base
-    mvn clean test -B -nsu -Pcache-server-infinispan,auth-servers-crossdc-jboss,auth-server-wildfly -Dtest=org.keycloak.testsuite.crossdc.**.* 2>&1 |
+    mvn clean test -Dauth.server.ssl.required=false -B -nsu -Pcache-server-infinispan,auth-servers-crossdc-jboss,auth-server-wildfly -Dtest=org.keycloak.testsuite.crossdc.**.* 2>&1 |
         java -cp ../../../utils/target/classes org.keycloak.testsuite.LogTrimmer
     exit ${PIPESTATUS[0]}
 fi
 
 if [ $1 == "crossdc-adapter" ]; then
     cd testsuite/integration-arquillian
-    mvn install -B -nsu -Pauth-servers-crossdc-jboss,auth-server-wildfly,cache-server-infinispan,app-server-wildfly -DskipTests
+    mvn install -Dauth.server.ssl.required=false -B -nsu -Pauth-servers-crossdc-jboss,auth-server-wildfly,cache-server-infinispan,app-server-wildfly -DskipTests
 
     cd tests/base
-    mvn clean test -B -nsu -Pcache-server-infinispan,auth-servers-crossdc-jboss,auth-server-wildfly,app-server-wildfly -Dtest=org.keycloak.testsuite.adapter.**.crossdc.**.* 2>&1 |
+    mvn clean test -Dauth.server.ssl.required=false -B -nsu -Pcache-server-infinispan,auth-servers-crossdc-jboss,auth-server-wildfly,app-server-wildfly -Dtest=org.keycloak.testsuite.adapter.**.crossdc.**.* 2>&1 |
         java -cp ../../../utils/target/classes org.keycloak.testsuite.LogTrimmer
     exit ${PIPESTATUS[0]}
 fi
