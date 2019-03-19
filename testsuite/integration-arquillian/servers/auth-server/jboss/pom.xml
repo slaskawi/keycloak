@@ -220,12 +220,12 @@
                                             <!-- These properties become equivalent to properties defined on the command line. -->
                                             <!-- Without specifying those the default values would be used regardless what is -->
                                             <!-- defined via -Dproperty=value when executing maven command -->
-                                            <property name="auth.server.worker.io-threads">${auth.server.worker.io-threads}</property>
-                                            <property name="auth.server.worker.task-max-threads">${auth.server.worker.task-max-threads}</property>
+                                            <property name="auth.server.worker.io-threads" value="${auth.server.worker.io-threads}" />
+                                            <property name="auth.server.worker.task-max-threads" value="${auth.server.worker.task-max-threads}" />
                                             <!-- Following properties are cluster specific -->
-                                            <property name="session.cache.owners">${session.cache.owners}</property>
-                                            <property name="offline.session.cache.owners">${offline.session.cache.owners}</property>
-                                            <property name="login.failure.cache.owners">${login.failure.cache.owners}</property>
+                                            <property name="session.cache.owners" value="${session.cache.owners}" />
+                                            <property name="offline.session.cache.owners" value="${offline.session.cache.owners}" />
+                                            <property name="login.failure.cache.owners" value="{login.failure.cache.owners}" />
                                         </ant>
                                     </target>
                                 </configuration>
@@ -416,16 +416,19 @@
                                     <configuration>
                                         <target>
                                             <ant antfile="${common.resources}/ant/configure.xml" target="configure-server-jpa">
+                                                <!-- I'm intentionally leaving this as a comment. Before this gets integrated,
+                                                     I need to speak with Tomas and Vlasta if their use cases work -->
+
                                                 <!-- These properties become equivalent to properties defined on the command line. -->
                                                 <!-- Without specifying those the default values would be used regardless what is -->
                                                 <!-- defined via -Dproperty=value when executing maven command -->
-                                                <property name="jdbc.driver.tmp.dir">${jdbc.driver.tmp.dir}</property>
-                                                <property name="jdbc.mvn.artifactId">${jdbc.mvn.artifactId}</property>
-                                                <property name="jdbc.mvn.version">${jdbc.mvn.version}</property>
-                                                <property name="keycloak.connectionsJpa.url">${keycloak.connectionsJpa.url}</property>
-                                                <property name="keycloak.connectionsJpa.user">${keycloak.connectionsJpa.user}</property>
-                                                <property name="keycloak.connectionsJpa.password">${keycloak.connectionsJpa.password}</property>
-                                                <property name="keycloak.connectionsJpa.schema">${keycloak.connectionsJpa.schema}</property>
+<!--                                                <property name="jdbc.driver.tmp.dir" value="${jdbc.driver.tmp.dir}" />-->
+<!--                                                <property name="jdbc.mvn.artifactId" value="${jdbc.mvn.artifactId}" />-->
+<!--                                                <property name="jdbc.mvn.version" value="${jdbc.mvn.version}" />-->
+<!--                                                <property name="keycloak.connectionsJpa.url" value="${keycloak.connectionsJpa.url}" />-->
+<!--                                                <property name="keycloak.connectionsJpa.user" value="${keycloak.connectionsJpa.user}" />-->
+<!--                                                <property name="keycloak.connectionsJpa.password" value="${keycloak.connectionsJpa.password}" />-->
+<!--                                                <property name="keycloak.connectionsJpa.schema" value="${keycloak.connectionsJpa.schema}" />-->
                                             </ant>
                                         </target>
                                     </configuration>

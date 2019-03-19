@@ -717,6 +717,37 @@ The exact steps to configure Docker depend on the operating system.
 By default, the test will run against Undertow based embedded Keycloak Server, thus no distribution build is required beforehand.
 The exact command line arguments depend on the operating system.
 
+
+## Using DB Allocator Service
+
+The testsuite can use the DB Allocator Service to allocate and release desired database automatically.
+Since some of the database properties (such as JDBC URL, Username or Password) need to be used when building the Auth Server,
+the allocation and deallocation need to happen when building the `integration-arquillian` project (instead of `tests/base` as
+it happens in other cases).
+
+In order to use the DB Allocator Service, you must use the `jpa` profile with one of the `db-allocator-*`. Here's a full example to
+run JPA with Auth Server Wildfly and MSSQL 2016:
+
+```
+mvn -f testsuite/integration-arquillian/pom.xml \
+    -Pjpa,auth-server-wildfly,db-allocator-db-mssql2016 \
+    -Ddballocator.uri=<<db-allocator-servlet-url>> \
+    -Ddballocator.user=<<db-allocator-user>> \
+    -Dmaven.test.failure.ignore=true
+```
+
+Using `-Dmaven.test.failure.ignore=true` is not strictly required but highly recommended. After running the tests,
+the DB Allocator Plugin should release the allocated database.
+
+Other implemented profiles:
+
+* `db-allocator-db-oracle11g` - for testing with Oracle 11g
+* `db-allocator-db-mssql2016` - for testing with MSSQL 2016
+* `db-allocator-db-mariadb` - for testing with MariaDB Galera Cluster
+* `db-allocator-db-postgres` - dor testing with Postgres 9.6.x
+* `db-allocator-db-mysql` - dor testing with MySQL 5.7
+
+
 ### General guidelines
 
 If docker daemon doesn't run locally, or if you're not running on Linux, you may need
