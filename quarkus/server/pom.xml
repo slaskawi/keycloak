@@ -14,10 +14,30 @@
     <name>Keycloak Quarkus Server App</name>
     <artifactId>keycloak-quarkus-server-app</artifactId>
 
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>io.quarkus</groupId>
+          <artifactId>quarkus-bom</artifactId>
+          <version>1.9.0.Final</version>
+          <type>pom</type>
+          <scope>import</scope>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-quarkus-server</artifactId>
+        </dependency>
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-smallrye-health</artifactId>
+      </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-metrics</artifactId>
         </dependency>
 
         <!-- This dependency should not be here but due to the structure of the modules we need to make sure it is built
