@@ -17,14 +17,18 @@
 
 package org.keycloak.provider.quarkus;
 
-import org.keycloak.common.ClientConnection;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.services.filters.AbstractRequestFilter;
-
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.RoutingContext;
+import org.keycloak.common.ClientConnection;
+import org.keycloak.common.util.Resteasy;
+import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.KeycloakSessionFactory;
+import org.keycloak.services.filters.AbstractRequestFilter;
+import org.keycloak.services.resources.KeycloakApplication;
+
+import java.util.function.Consumer;
 
 /**
  * <p>This filter is responsible for managing the request lifecycle as well as setting up the necessary context to process incoming
@@ -44,12 +48,17 @@ public class QuarkusRequestFilter extends AbstractRequestFilter implements Handl
         // our code should always be run as blocking until we don't provide a better support for running non-blocking code
         // in the event loop
         context.vertx().executeBlocking(promise -> {
-            filter(createClientConnection(context.request()), (session) -> {
+            route(context, (session) -> {
                 try {
                     // we need to close the session before response is sent to the client, otherwise subsequent requests could
                     // not get the latest state because the session from the previous request is still being closed
                     // other methods from Vert.x to add a handler to the response works asynchronously
-                    context.addHeadersEndHandler(event -> close(session));
+                    context.addHeadersEndHandler(new Handler<Void>() {
+                        @Override
+                        public void handle(Void event) {
+                            QuarkusRequestFilter.this.close(session);
+                        }
+                    });
                     context.next();
                     promise.complete();
                 } catch (Throwable cause) {
@@ -64,6 +73,35 @@ public class QuarkusRequestFilter extends AbstractRequestFilter implements Handl
     @Override
     protected boolean isAutoClose() {
         return false;
+    }
+
+    protected void route(RoutingContext context, Consumer<KeycloakSession> next) {
+        ClientConnection clientConnection = createClientConnection(context.request());
+
+        String path = context.normalisedPath();
+        if (path.indexOf("health") != -1) {
+            nonTransactionalRequestFilter(clientConnection, next);
+        } else {
+            transactionalRequestFilter(clientConnection, next);
+        }
+    }
+
+    protected void transactionalRequestFilter(ClientConnection clientConnection, Consumer<KeycloakSession> next) {
+        filter(clientConnection, next);
+    }
+
+    protected void nonTransactionalRequestFilter(ClientConnection clientConnection, Consumer<KeycloakSession> next) {
+        KeycloakSessionFactory sessionFactory = KeycloakApplication.getSessionFactory();
+        KeycloakSession session = sessionFactory.create();
+
+        try {
+            Resteasy.pushContext(ClientConnection.class, clientConnection);
+            Resteasy.pushContext(KeycloakSession.class, session);
+
+            next.accept(session);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private ClientConnection createClientConnection(HttpServerRequest request) {
