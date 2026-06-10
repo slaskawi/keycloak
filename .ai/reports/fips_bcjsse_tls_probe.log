@@ -1,0 +1,52 @@
+Jun 10, 2026 6:48:20 AM org.bouncycastle.jsse.provider.PropertyUtils getBooleanSecurityProperty
+INFO: Found boolean security property [keystore.type.compat]: true
+Jun 10, 2026 6:48:20 AM org.bouncycastle.jsse.provider.PropertyUtils getStringSystemProperty
+INFO: Found string system property [java.home]: /usr/lib/jvm/java-21-openjdk-21.0.11.0.10-2.el9.aarch64
+Jun 10, 2026 6:48:20 AM org.bouncycastle.jsse.provider.PropertyUtils getStringSecurityProperty
+INFO: Found string security property [jdk.tls.disabledAlgorithms]: MD2, MD5withDSA, MD5withECDSARIPEMD160withRSA, RIPEMD160withECDSA, RIPEMD160withRSAandMGF1, MD5withRSA, SHA1withRSA, SHA1withDSA, SHA1withECDSA, SHA224withDSA, SHA256withDSA, SHA384withDSA, SHA512withDSA, SHA1withRSAandMGF1, RSA keySize < 2048, DSA keySize < 2048, DH keySize < 2048, EC keySize < 256, include jdk.disabled.namedCurves, TLSv1.1, TLSv1, SSLv3, SSLv2, DTLSv1.0, DHE_DSS, RSA_EXPORT, DHE_DSS_EXPORT, DHE_RSA_EXPORT, DH_DSS_EXPORT, DH_RSA_EXPORT, DH_anon, ECDH_anon, DH_RSA, DH_DSS, ECDH, 3DES_EDE_CBC, DES_CBC, RC4_40, RC4_128, DES40_CBC, RC2, anon, NULL, HmacMD5
+Jun 10, 2026 6:48:20 AM org.bouncycastle.jsse.provider.DisabledAlgorithmConstraints create
+WARNING: Ignoring unsupported entry in 'jdk.tls.disabledAlgorithms': include jdk.disabled.namedCurves
+Jun 10, 2026 6:48:20 AM org.bouncycastle.jsse.provider.PropertyUtils getStringSecurityProperty
+INFO: Found string security property [jdk.certpath.disabledAlgorithms]: MD2, MD5withDSA, MD5withECDSARIPEMD160withRSA, RIPEMD160withECDSA, RIPEMD160withRSAandMGF1, MD5withRSA, SHA1withRSA, SHA1withDSA, SHA1withECDSA, SHA224withDSA, SHA256withDSA, SHA384withDSA, SHA512withDSA, SHA1withRSAandMGF1, RSA keySize < 2048, DSA keySize < 2048, DH keySize < 2048, EC keySize < 256, SHA1, MD5
+FIPS mode: strict
+BCFIPS approved-only property: true
+SSLContext provider: BCJSSE
+Enabled protocols:
+  TLSv1.2
+  TLSv1.3
+Enabled cipher suites:
+  TLS_AES_128_GCM_SHA256
+  TLS_AES_256_GCM_SHA384
+  TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+  TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+  TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+  TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+  TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+  TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+  TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+  TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+  TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+  TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+  TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+  TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+  TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+Providers:
+  BCFIPS - BouncyCastle Security Provider (FIPS edition) v2.1.2
+  BCJSSE - Bouncy Castle JSSE Provider Version 2.1.22
+  SUN - SUN (DSA key/parameter generation; DSA signing; SHA-1, MD5 digests; SecureRandom; X.509 certificates; PKCS12, JKS & DKS keystores; PKIX CertPathValidator; PKIX CertPathBuilder; LDAP, Collection CertStores, JavaPolicy Policy; JavaLoginConfig Configuration)
+  SunRsaSign - Sun RSA signature provider
+  SunEC - Sun Elliptic Curve provider
+  SunJSSE - Sun JSSE provider(PKCS12, SunX509/PKIX key/trust factories, SSLv3/TLSv1/TLSv1.1/TLSv1.2/TLSv1.3/DTLSv1.0/DTLSv1.2)
+  SunJCE - SunJCE Provider (implements RSA, DES, Triple DES, AES, Blowfish, ARCFOUR, RC2, PBE, Diffie-Hellman, HMAC, ChaCha20)
+  SunJGSS - Sun (Kerberos v5, SPNEGO)
+  SunSASL - Sun SASL provider(implements client mechanisms for: DIGEST-MD5, EXTERNAL, PLAIN, CRAM-MD5, NTLM; server mechanisms for: DIGEST-MD5, CRAM-MD5, NTLM)
+  XMLDSig - XMLDSig (DOM XMLSignatureFactory; DOM KeyInfoFactory; C14N 1.0, C14N 1.1, Exclusive C14N, Base64, Enveloped, XPath, XPath2, XSLT TransformServices)
+  SunPCSC - Sun PC/SC provider
+  JdkLDAP - JdkLDAP Provider (implements LDAP CertStore)
+  JdkSASL - JDK SASL provider(implements client and server mechanisms for GSSAPI)
+  SunPKCS11 - Unconfigured and unusable PKCS11 provider
