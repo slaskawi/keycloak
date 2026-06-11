@@ -1,0 +1,49 @@
+group	pdf_path	txt_path	source_url	title
+fips-140-3	fips-140-3/NIST.FIPS.140-3.pdf	fips-140-3/NIST.FIPS.140-3.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.140-3.pdf	FIPS 140-3: Security Requirements for Cryptographic Modules
+fips-140-3	fips-140-3/NIST.SP.800-140.pdf	fips-140-3/NIST.SP.800-140.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140.pdf	SP 800-140: FIPS 140-3 Derived Test Requirements
+fips-140-3	fips-140-3/NIST.SP.800-140A.pdf	fips-140-3/NIST.SP.800-140A.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140A.pdf	SP 800-140A: CMVP Documentation Requirements
+fips-140-3	fips-140-3/NIST.SP.800-140Br1.pdf	fips-140-3/NIST.SP.800-140Br1.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140Br1.pdf	SP 800-140B Rev. 1: CMVP Security Policy Requirements
+fips-140-3	fips-140-3/NIST.SP.800-140Cr2.pdf	fips-140-3/NIST.SP.800-140Cr2.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140Cr2.pdf	SP 800-140C Rev. 2: CMVP Approved Security Functions
+fips-140-3	fips-140-3/NIST.SP.800-140Dr2.pdf	fips-140-3/NIST.SP.800-140Dr2.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140Dr2.pdf	SP 800-140D Rev. 2: CMVP Approved Sensitive Parameter Generation and Establishment Methods
+fips-140-3	fips-140-3/NIST.SP.800-140E.pdf	fips-140-3/NIST.SP.800-140E.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140E.pdf	SP 800-140E: CMVP Approved Authentication Mechanisms
+fips-140-3	fips-140-3/NIST.SP.800-140F.pdf	fips-140-3/NIST.SP.800-140F.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140F.pdf	SP 800-140F: CMVP Approved Non-Invasive Attack Mitigation Test Metrics
+fips-140-3	fips-140-3/FIPS-140-3-IG.pdf	fips-140-3/FIPS-140-3-IG.txt	https://csrc.nist.gov/CSRC/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS%20140-3%20IG.pdf	FIPS 140-3 Implementation Guidance
+fips-140-2	fips-140-2/NIST.FIPS.140-2.pdf	fips-140-2/NIST.FIPS.140-2.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.140-2.pdf	FIPS 140-2: Security Requirements for Cryptographic Modules
+fips-140-2	fips-140-2/fips1402annexa.pdf	fips-140-2/fips1402annexa.txt	https://csrc.nist.gov/CSRC/media//Publications/fips/140/2/final/documents/fips1402annexa.pdf	FIPS 140-2 Annex A: Approved Security Functions
+fips-140-2	fips-140-2/fips1402annexb.pdf	fips-140-2/fips1402annexb.txt	https://csrc.nist.gov/CSRC/media//Publications/fips/140/2/final/documents/fips1402annexb.pdf	FIPS 140-2 Annex B: Approved Protection Profiles
+fips-140-2	fips-140-2/fips1402annexc.pdf	fips-140-2/fips1402annexc.txt	https://csrc.nist.gov/CSRC/media//Publications/fips/140/2/final/documents/fips1402annexc.pdf	FIPS 140-2 Annex C: Approved Random Number Generators
+fips-140-2	fips-140-2/fips1402annexd.pdf	fips-140-2/fips1402annexd.txt	https://csrc.nist.gov/CSRC/media//Publications/fips/140/2/final/documents/fips1402annexd.pdf	FIPS 140-2 Annex D: Approved Key Establishment Techniques
+fips-140-2	fips-140-2/FIPS1402DTR.pdf	fips-140-2/FIPS1402DTR.txt	https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validation-Program/documents/fips140-2/FIPS1402DTR.pdf	FIPS 140-2 Derived Test Requirements
+fips-140-2	fips-140-2/FIPS1402IG.pdf	fips-140-2/FIPS1402IG.txt	https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validation-Program/documents/fips140-2/FIPS1402IG.pdf	FIPS 140-2 Implementation Guidance
+algorithms	algorithms/NIST.FIPS.197-upd1.pdf	algorithms/NIST.FIPS.197-upd1.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197-upd1.pdf	FIPS 197 Update 1: Advanced Encryption Standard
+algorithms	algorithms/NIST.FIPS.180-4.pdf	algorithms/NIST.FIPS.180-4.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf	FIPS 180-4: Secure Hash Standard
+algorithms	algorithms/NIST.FIPS.202.pdf	algorithms/NIST.FIPS.202.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf	FIPS 202: SHA-3 Standard
+algorithms	algorithms/NIST.FIPS.198-1.pdf	algorithms/NIST.FIPS.198-1.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.198-1.pdf	FIPS 198-1: The Keyed-Hash Message Authentication Code
+algorithms	algorithms/NIST.FIPS.186-5.pdf	algorithms/NIST.FIPS.186-5.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf	FIPS 186-5: Digital Signature Standard
+algorithms	algorithms/NIST.FIPS.203.pdf	algorithms/NIST.FIPS.203.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf	FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism
+algorithms	algorithms/NIST.FIPS.204.pdf	algorithms/NIST.FIPS.204.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf	FIPS 204: Module-Lattice-Based Digital Signature Standard
+algorithms	algorithms/NIST.FIPS.205.pdf	algorithms/NIST.FIPS.205.txt	https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf	FIPS 205: Stateless Hash-Based Digital Signature Standard
+algorithms	algorithms/NIST.SP.800-38A.pdf	algorithms/NIST.SP.800-38A.txt	https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38a.pdf	SP 800-38A: Block Cipher Modes - ECB, CBC, CFB, OFB, CTR
+algorithms	algorithms/NIST.SP.800-38B.pdf	algorithms/NIST.SP.800-38B.txt	https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38b.pdf	SP 800-38B: CMAC Mode
+algorithms	algorithms/NIST.SP.800-38C.pdf	algorithms/NIST.SP.800-38C.txt	https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38c.pdf	SP 800-38C: CCM Mode
+algorithms	algorithms/NIST.SP.800-38D.pdf	algorithms/NIST.SP.800-38D.txt	https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf	SP 800-38D: GCM and GMAC Modes
+algorithms	algorithms/NIST.SP.800-38E.pdf	algorithms/NIST.SP.800-38E.txt	https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38e.pdf	SP 800-38E: XTS-AES Mode
+algorithms	algorithms/NIST.SP.800-38F.pdf	algorithms/NIST.SP.800-38F.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38F.pdf	SP 800-38F: Key Wrapping Methods
+algorithms	algorithms/NIST.SP.800-38G.pdf	algorithms/NIST.SP.800-38G.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38G.pdf	SP 800-38G: Format-Preserving Encryption
+algorithms	algorithms/NIST.SP.800-52r2.pdf	algorithms/NIST.SP.800-52r2.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf	SP 800-52 Rev. 2: TLS Guidelines
+algorithms	algorithms/NIST.SP.800-56Ar3.pdf	algorithms/NIST.SP.800-56Ar3.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar3.pdf	SP 800-56A Rev. 3: Pair-Wise Key Establishment Using Discrete Logarithm Cryptography
+algorithms	algorithms/NIST.SP.800-56Br2.pdf	algorithms/NIST.SP.800-56Br2.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Br2.pdf	SP 800-56B Rev. 2: Pair-Wise Key Establishment Using Integer Factorization Cryptography
+algorithms	algorithms/NIST.SP.800-56Cr2.pdf	algorithms/NIST.SP.800-56Cr2.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Cr2.pdf	SP 800-56C Rev. 2: Key-Derivation Methods in Key-Establishment Schemes
+algorithms	algorithms/NIST.SP.800-57pt1r5.pdf	algorithms/NIST.SP.800-57pt1r5.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf	SP 800-57 Part 1 Rev. 5: Recommendation for Key Management
+algorithms	algorithms/NIST.SP.800-67r2.pdf	algorithms/NIST.SP.800-67r2.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-67r2.pdf	SP 800-67 Rev. 2: Triple Data Encryption Algorithm - Withdrawn
+algorithms	algorithms/NIST.SP.800-90Ar1.pdf	algorithms/NIST.SP.800-90Ar1.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf	SP 800-90A Rev. 1: Deterministic Random Bit Generators
+algorithms	algorithms/NIST.SP.800-90B.pdf	algorithms/NIST.SP.800-90B.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90B.pdf	SP 800-90B: Entropy Sources
+algorithms	algorithms/NIST.SP.800-90C.pdf	algorithms/NIST.SP.800-90C.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90C.pdf	SP 800-90C: Random Bit Generator Constructions
+algorithms	algorithms/NIST.SP.800-108r1-upd1.pdf	algorithms/NIST.SP.800-108r1-upd1.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-108r1-upd1.pdf	SP 800-108 Rev. 1 Update 1: Key Derivation Using Pseudorandom Functions
+algorithms	algorithms/NIST.SP.800-131Ar2.pdf	algorithms/NIST.SP.800-131Ar2.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-131Ar2.pdf	SP 800-131A Rev. 2: Transitioning Cryptographic Algorithms and Key Lengths
+algorithms	algorithms/NIST.SP.800-132.pdf	algorithms/NIST.SP.800-132.txt	https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf	SP 800-132: Password-Based Key Derivation
+algorithms	algorithms/NIST.SP.800-133r2.pdf	algorithms/NIST.SP.800-133r2.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-133r2.pdf	SP 800-133 Rev. 2: Cryptographic Key Generation
+algorithms	algorithms/NIST.SP.800-185.pdf	algorithms/NIST.SP.800-185.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-185.pdf	SP 800-185: SHA-3 Derived Functions
+algorithms	algorithms/NIST.SP.800-186.pdf	algorithms/NIST.SP.800-186.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-186.pdf	SP 800-186: Elliptic Curve Domain Parameters
+algorithms	algorithms/NIST.SP.800-208.pdf	algorithms/NIST.SP.800-208.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf	SP 800-208: Stateful Hash-Based Signature Schemes
+algorithms	algorithms/NIST.SP.800-227.pdf	algorithms/NIST.SP.800-227.txt	https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-227.pdf	SP 800-227: Key-Encapsulation Mechanisms

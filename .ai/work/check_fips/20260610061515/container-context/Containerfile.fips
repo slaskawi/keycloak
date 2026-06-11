@@ -1,0 +1,2 @@
+FROM keycloak-fips-base:999.0.0-snapshot-20260610061515
+COPY --chown=1000:0 bcfips/*.jar /opt/keycloak/providers/
