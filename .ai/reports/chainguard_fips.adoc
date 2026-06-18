@@ -1,0 +1,258 @@
+= Chainguard FIPS Research Prep: `HmacPBESHA256` and PKCS12 in Keycloak
+
+Generated: 2026-06-12
+
+== Upstream container logs
+
+
+
+= Email work-in-progress (AI agents shoudl not touch it unless requested)
+
+Upstream:
+2026-06-11T22:23:02.629582071Z stdout F {"timestamp":"2026-06-11T22:23:02.629439197Z","sequence":3575,"loggerClassName":"org.hibernate.engine.internal.SessionMetricsLogger_$logger","loggerName":"org.hibernate.session.metrics","level":"DEBUG","message":"HHH000401: Logging session metrics:\n\t0 ns acquiring 0 JDBC connections\n\t0 ns releasing 0 JDBC connections\n\t0 ns preparing 0 JDBC statements\n\t0 ns executing 0 JDBC statements\n\t0 ns executing 0 JDBC batches\n\t0 ns performing 0 second-level cache puts\n\t0 ns performing 0 second-level cache hits\n\t0 ns performing 0 second-level cache misses\n\t0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)\n\t0 ns executing 0 pre-partial-flushes\n\t0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)\n","threadName":"main","threadId":1,"mdc":{},"ndc":"","hostName":"keycloak-0","processName":"/usr/lib/jvm/java-21-openjdk-21.0.11.0.10-2.el9.x86_64/bin/java","processId":1,"service.name":"keycloak"}
+2026-06-11T22:23:02.631944051Z stdout F {"timestamp":"2026-06-11T22:23:02.631834349Z","sequence":3576,"loggerClassName":"org.jboss.logging.Logger","loggerName":"org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider","level":"DEBUG","message":"Validating if database is updated","threadName":"main","threadId":1,"mdc":{},"ndc":"","hostName":"keycloak-0","processName":"/usr/lib/jvm/java-21-openjdk-21.0.11.0.10-2.el9.x86_64/bin/java","processId":1,"service.name":"keycloak"}
+2026-06-11T22:23:02.651317339Z stdout F {"timestamp":"2026-06-11T22:23:02.651181571Z","sequence":3577,"loggerClassName":"org.jboss.logging.Logger","loggerName":
+
+
+2026-06-11T22:22:55.361499106Z stdout F {"timestamp":"2026-06-11T22:22:55.36136623Z","sequence":3235,"loggerClassName":"org.jboss.logging.Logger","loggerName":"org.keycloak.common.crypto.CryptoIntegration","level":"TRACE","message":"Java security providers: [ \n BCFIPS version 2.101 - class org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider, \n BCJSSE version 2.0123 - class org.bouncycastle.jsse.provider.BouncyCastleJsseProvider, \n BCRNG version 1.36 - class org.bouncycastle.entropy.provider.BouncyCastleEntropyProvider, \n SUN version 21 - class sun.security.provider.Sun, \n SunJGSS version 21 - class sun.security.jgss.SunProvider, \n SunSASL version 21 - class com.sun.security.sasl.Provider, \n XMLDSig version 21 - class org.jcp.xml.dsig.internal.dom.XMLDSigRI, \n SunPCSC version 21 - class sun.security.smartcardio.SunPCSC, \n JdkLDAP version 21 - class sun.security.provider.certpath.ldap.JdkLDAP, \n JdkSASL version 21 - class com.sun.security.sasl.gsskerb.JdkSASL, \n]","threadName":"main","threadId":1,"mdc":{},"ndc":"","hostName":"keycloak-0","processName":"/usr/lib/jvm/java-21-openjdk/bin/java","processId":1,"service.name":"keycloak"}
+
+2026-06-11T22:22:55.362102789Z stdout F {"timestamp":"2026-06-11T22:22:55.361977273Z","sequence":3236,"loggerClassName":"org.jboss.logging.Logger","loggerName":"org.keycloak.common.crypto.CryptoIntegration","level":"TRACE","message":"Security properties: [ \n Java security properties file: /opt/keycloak/data/fips-sunjce.security\n Default keystore type: bcfks\n KeyManagerFactory.getDefaultAlgorithm(): PKIX\n TrustManagerFactory.getDefaultAlgorithm(): PKIX\n keystore.type.compat: true\n javax.net.ssl.trustStoreType: bcfks\n javax.net.ssl.trustStore: /usr/share/java/keycloak/bin/../data/keycloak-truststore.p12\n javax.net.ssl.trustStoreProvider: null\n javax.net.ssl.keyStoreType: null\n javax.net.ssl.keyStore: null\n javax.net.ssl.keyStoreProvider: null\n]","threadName":"main","threadId":1,"mdc":{},"ndc":"","hostName":"keycloak-0","processName":"/usr/lib/jvm/java-21-openjdk/bin/java","processId":1,"service.name":"keycloak"}
+2026-06-11T22:22:53.239224925Z stdout F {"timestamp":"2026-06-11T22:22:48.754812336Z","sequence":363,"loggerClassName":"org.jboss.logging.Logger","loggerName":"org.keycloak.common.crypto.CryptoIntegration","level":"DEBUG","message":"Using the crypto provider: org.keycloak.crypto.fips.Fips1402StrictCryptoProvider","threadName":"main","threadId":1,"mdc":{},"ndc":"","hostName":"keycloak-0","processName":"/usr/lib/jvm/java-21-openjdk/bin/java","processId":1,"service.name":"keycloak"}
+
+
+Dear Chainguard Team,
+
+After performing a research on the HmacPBESHA256 algorithm and Keycloak FIPS mode, we came to the conclusion that using PKCS12 keystore in our deployments was a mistake. As confirmed by Stian Thorgersen (Keycloak Lead), Keycloak has been tested with the Red Hat build of OpenJDK [1] that has been properly configured for FIPS mode running on a FIPS-enabled Fedora or RHEL distribution. In such as setup, trying to instantiate the HmacPBESHA256 algorithm using a PKCS12 keystore is expected to fail at the JDK level.
+
+
+[1] https://developers.redhat.com/products/openjdk/download
+
+== Scope and Source Rule
+
+This prep note answers two questions for a Keycloak-in-FIPS-mode assessment:
+
+. Is `HmacPBESHA256` a supported algorithm in FIPS 140-2 mode?
+. Is loading/using it through a PKCS12 keystore a supported mechanism when Keycloak runs in FIPS mode?
+
+For FIPS standards authority, this document uses only NIST/government sources. Keycloak source files, tests, docs, and runtime logs are used only as local implementation evidence.
+
+== Executive Answer
+
+`HmacPBESHA256` is not a NIST-approved algorithm name by itself. It is a Java provider spelling observed in this runtime as a SunJCE PKCS12-PBE MAC implementation:
+
+* `.ai/reports/fips_crypto_debug_raw.log:964`: `SunJCE: Mac.HmacPBESHA256 -> com.sun.crypto.provider.HmacPKCS12PBECore$HmacPKCS12PBE_SHA256`
+* `.ai/reports/fips_instantiable_crypto.log:1905`: `INSTANTIABLE|Mac|SunJCE|HmacPBESHA256|javax.crypto.Mac`
+
+The underlying HMAC-SHA-256 primitive can be FIPS-approved, but only when the exact HMAC implementation is validated for approved mode, uses an approved hash function, and meets key-strength requirements. The `PBE`/password-derived part must also be justified separately as an approved key-derivation/storage mechanism; the Java name alone does not prove that.
+
+For Keycloak strict FIPS mode, loading PKCS12 as the mechanism for this is not supported. Local Keycloak evidence says strict mode supports BCFKS, not PKCS12:
+
+* `crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/FIPS1402KeystoreTypesTest.java:43`: "BCFIPS approved mode supports only BCFKS."
+* `docs/guides/server/fips.adoc:122`: strict mode default keystore/truststore type is BCFKS.
+* `docs/guides/server/fips.adoc:134`: `jks` and `pkcs12` are not supported in strict mode.
+
+The current runtime inventory reinforces why: `PKCS12` keystores are supplied by `SUN` and `SunJSSE`, while `HmacPBESHA256` is supplied by `SunJCE`, not by `BCFIPS`.
+
+== NIST/FIPS Analysis
+
+=== What FIPS 140-2 Requires
+
+FIPS 140-2 is about a validated cryptographic module and its approved mode, not about accepting any algorithm name that appears in a JCA provider list. The standard defines approved mode as one that "employs only Approved security functions" and requires a module to be inside a "defined cryptographic boundary." Source: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.140-2.pdf[FIPS 140-2], local text `.ai/fips/references/fips-140-2/NIST.FIPS.140-2.txt:561` and `:1046-:1049`.
+
+FIPS 140-2 also requires the operator to know when approved mode is selected, and it permits non-approved functions only for non-approved modes. Source: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.140-2.pdf[FIPS 140-2], local text `.ai/fips/references/fips-140-2/NIST.FIPS.140-2.txt:1049-:1055`.
+
+The implementation guidance is stricter for tested implementations: untested subsets of approved algorithms "may not be used" in approved mode. Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validation-Program/documents/fips140-2/FIPS1402IG.pdf[FIPS 140-2 Implementation Guidance], local text `.ai/fips/references/fips-140-2/FIPS1402IG.txt:10465-:10474`.
+
+=== HMAC-SHA-256 Status
+
+FIPS 140-2 Annex A lists both SHA-256 through SHS and HMAC as approved security functions:
+
+* SHS includes `SHA-256`. Source: https://csrc.nist.gov/CSRC/media//Publications/fips/140/2/final/documents/fips1402annexa.pdf[FIPS 140-2 Annex A], local text `.ai/fips/references/fips-140-2/fips1402annexa.txt:186-:193`.
+* HMAC is listed under message authentication. Source: https://csrc.nist.gov/CSRC/media//Publications/fips/140/2/final/documents/fips1402annexa.pdf[FIPS 140-2 Annex A], local text `.ai/fips/references/fips-140-2/fips1402annexa.txt:240-:246`.
+
+FIPS 198-1 requires HMAC to use an approved hash function: "HMAC shall use an Approved cryptographic hash function." Source: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.198-1.pdf[FIPS 198-1], local text `.ai/fips/references/algorithms/NIST.FIPS.198-1.txt:217`.
+
+SP 800-131A Rev. 2 makes HMAC generation acceptable only at 112-bit security strength or higher: "Keys less than 112 bits" are disallowed. Source: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-131Ar2.pdf[SP 800-131A Rev. 2], local text `.ai/fips/references/algorithms/NIST.SP.800-131Ar2.txt:1319-:1325` and `:1358-:1364`.
+
+Conclusion: HMAC-SHA-256 can be approved, but `HmacPBESHA256` is only acceptable FIPS evidence if the runtime uses a validated, approved-mode HMAC-SHA-256 implementation with acceptable key strength.
+
+=== Password-Based Key Derivation Status
+
+NIST SP 800-132 addresses password-based derivation for storage. It warns that user passwords "shall not be used directly" as cryptographic keys. Source: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf[SP 800-132], local text `.ai/fips/references/algorithms/NIST.SP.800-132.txt:282-:289`.
+
+SP 800-132 approves PBKDF2 when it uses HMAC with an approved hash as its PRF. Source: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf[SP 800-132], local text `.ai/fips/references/algorithms/NIST.SP.800-132.txt:344-:360`.
+
+The FIPS 140-2 IG requires a CAVP-tested PBKDF certificate for approved-mode use after the stated transition, and says password-derived keys "may only be used" for storage applications. Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validation-Program/documents/fips140-2/FIPS1402IG.pdf[FIPS 140-2 Implementation Guidance], local text `.ai/fips/references/fips-140-2/FIPS1402IG.txt:12479-:12504`.
+
+Conclusion: a password-derived HMAC key can be part of an approved storage mechanism only if the KDF and HMAC are both approved and validated in the module. The `HmacPBE` name does not establish that. In this runtime, `HmacPBESHA256` was observed as `HmacPKCS12PBECore`, not as `PBKDF2WithHmacSHA256`.
+
+== Local Keycloak Evidence
+
+=== Provider Boundary Observed in the Existing Runtime Logs
+
+The prior runtime inventory was captured in strict mode and shows:
+
+* `.ai/reports/fips_instantiable_crypto.log:3`: `FIPS mode: strict`
+* `.ai/reports/fips_instantiable_crypto.log:4`: `BCFIPS approved-only property: true`
+* `.ai/reports/fips_instantiable_crypto.log:6-:7`: `BCFIPS` and `BCJSSE` are providers 1 and 2.
+* `.ai/reports/fips_instantiable_crypto.log:8-:12`: `SUN`, `SunJSSE`, and `SunJCE` remain installed and expose PKCS12/PBE/HMAC services.
+
+The relevant instantiable rows are:
+
+|===
+|Service |Provider |Name |Local evidence |FIPS implication
+
+|`KeyStore` |`SUN` |`PKCS12` |`.ai/reports/fips_instantiable_crypto.log:1754` |Outside the `BCFIPS` provider boundary in this run.
+|`KeyStore` |`SunJSSE` |`PKCS12` |`.ai/reports/fips_instantiable_crypto.log:1756` |Outside the `BCFIPS` provider boundary in this run.
+|`Mac` |`SunJCE` |`HmacPBESHA256` |`.ai/reports/fips_instantiable_crypto.log:1905` |HMAC-like primitive is exposed by non-BCFIPS provider.
+|===
+
+Debug logs agree:
+
+* `.ai/reports/fips_crypto_debug_raw.log:6506`: `KeyStore.BCFKS type from: BCFIPS`
+* `.ai/reports/fips_crypto_debug_raw.log:6507`: `KeyStore.PKCS12 type from: SUN`
+* `.ai/reports/fips_crypto_debug_raw.log:964`: `Mac.HmacPBESHA256` comes from `SunJCE`.
+
+This is the central evidence gap: an approved algorithm family is not enough. The service must be performed by the validated module in its approved mode.
+
+=== Keycloak Strict Mode Selects BCFKS
+
+Keycloak's strict provider sets Bouncy Castle approved-only mode globally:
+
+* `crypto/fips1402/src/main/java/org/keycloak/crypto/fips/Fips1402StrictCryptoProvider.java:14-:16`
+
+Keycloak's FIPS provider asks the BCFIPS provider for keystores:
+
+* `crypto/fips1402/src/main/java/org/keycloak/crypto/fips/FIPS1402Provider.java:221-:223`
+
+Supported keystore types are derived by attempting to instantiate each format through the active crypto provider:
+
+* `common/src/main/java/org/keycloak/common/crypto/CryptoProvider.java:103-:110`
+
+The strict-mode tests expect only BCFKS:
+
+* `crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/FIPS1402KeystoreTypesTest.java:43-:49`
+* `test-framework/core/src/main/java/org/keycloak/testframework/crypto/CryptoHelper.java:24-:28`
+
+The SSL test explicitly guards PKCS12 behind non-approved mode:
+
+* `crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/FIPS1402SslTest.java:53-:63`
+* `crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/FIPS1402SslTest.java:69-:78`
+
+=== Documentation and Configuration Surface
+
+The local FIPS guide says PKCS12 works in BCFIPS non-approved mode and that strict mode uses BCFKS by default:
+
+* `docs/guides/server/fips.adoc:58`: PKCS12 works in non-approved mode.
+* `docs/guides/server/fips.adoc:70`: PKCS12 in FIPS mode does not manage secret keys.
+* `docs/guides/server/fips.adoc:122-:123`: strict mode defaults keystore/truststore type to BCFKS.
+* `docs/guides/server/fips.adoc:134-:135`: `jks` and `pkcs12` are not supported in strict mode.
+
+The HTTP option and mapper enforce that default:
+
+* `quarkus/config-api/src/main/java/org/keycloak/config/HttpOptions.java:96-:101`
+* `quarkus/runtime/src/main/java/org/keycloak/quarkus/runtime/configuration/mappers/HttpPropertyMappers.java:313-:318`
+
+However, two non-HTTPS configuration surfaces still default to PKCS12:
+
+* `quarkus/config-api/src/main/java/org/keycloak/config/ConfigKeystoreOptions.java:15-:19`
+* `quarkus/config-api/src/main/java/org/keycloak/config/VaultOptions.java:44-:48`
+* `services/src/main/java/org/keycloak/vault/FilesKeystoreVaultProviderFactory.java:53`
+
+Those defaults should be reviewed if the Chainguard target is strict FIPS mode. A PKCS12 default is not automatically a violation, but any cryptographic protection or MAC verification done through `SUN`/`SunJCE` would not be approved-mode evidence for the Keycloak BCFIPS path.
+
+== Direct Answers
+
+=== Is `HmacPBESHA256` Supported in FIPS 140-2 Mode?
+
+Answer: only as a conditional decomposition, not as the Java name itself.
+
+Supported:
+
+* HMAC is an approved FIPS 140-2 Annex A message authentication function.
+* SHA-256 is an approved SHS hash.
+* HMAC-SHA-256 generation is acceptable with keys at least 112 bits.
+* A separate PBKDF2-with-HMAC-SHA-256 KDF can be approved for storage key derivation when it satisfies SP 800-132 and validation requirements. This does not prove PKCS12 `HmacPBE` uses that approved KDF.
+
+Not established:
+
+* `HmacPBESHA256` is not listed by NIST as an approved algorithm name.
+* The local runtime exposes `HmacPBESHA256` from `SunJCE`, not `BCFIPS`.
+* The `PBE` part implies password-derived key material, which needs separate SP 800-132 or other approved-KDF evidence.
+* The prior runtime evidence does not show a CAVP-validated, approved-mode service for `HmacPBESHA256`.
+
+Therefore, for this Keycloak strict FIPS assessment, `HmacPBESHA256` should be treated as not acceptable FIPS evidence unless a validated provider certificate and service mapping prove that the exact HMAC/KDF use is inside the approved boundary.
+
+=== Is Loading It from PKCS12 Supported in Keycloak FIPS Mode?
+
+Answer: not for strict FIPS approved mode.
+
+In non-strict FIPS mode, PKCS12 is operationally supported for some Keycloak use cases. That mode is BCFIPS non-approved mode, so it is not the target for a full FIPS approved-mode claim.
+
+In strict mode:
+
+* Keycloak's expected supported keystore type is BCFKS.
+* PKCS12 is explicitly guarded out by tests that require non-approved mode.
+* Runtime evidence shows PKCS12 is resolved from `SUN`/`SunJSSE`, not `BCFIPS`.
+* Runtime evidence shows `HmacPBESHA256` is resolved from `SunJCE`, not `BCFIPS`.
+
+The result is provider-boundary failure. Even if the PKCS12 file uses HMAC-SHA-256 for integrity, Keycloak strict FIPS cannot count that as approved-mode use unless the MAC and any password-based derivation are implemented by the validated approved-mode provider. The existing evidence shows the opposite path.
+
+== Chainguard-Specific Prep Notes
+
+No local repository evidence mentions Chainguard or Wolfi. For a Chainguard Keycloak FIPS image review, the required proof should be image-specific:
+
+. Capture the Java provider order inside the exact image.
+. Confirm whether `BCFIPS` and `BCJSSE` are installed and in approved-only mode.
+. Confirm that `KeyStore.getInstance("PKCS12")` does not route cryptographic protection through non-validated providers in strict mode.
+. Confirm that `Mac.getInstance("HmacPBESHA256")`, if available, is not used for any approved-mode service unless it comes from a validated module and is covered by the module certificate/security policy.
+. Prefer BCFKS for Keycloak server keys, realm java-keystore providers, client key material, and vault/config keystore material in strict mode.
+
+The core assessment should not be "does the image contain a FIPS-capable library?" It should be "which provider performs each cryptographic service, and is that service inside the approved module boundary?"
+
+== Recommended Follow-up Tests
+
+Run these inside the exact Chainguard candidate image and record output in `.ai/reports`:
+
+[source,text]
+----
+Security.getProviders()
+KeyStore.getInstance("BCFKS").getProvider()
+KeyStore.getInstance("PKCS12").getProvider()
+Mac.getInstance("HmacPBESHA256").getProvider()
+System.getProperty("org.bouncycastle.fips.approved_only")
+CryptoIntegration.getProvider().getSupportedKeyStoreTypes()
+----
+
+Then add negative tests for strict mode:
+
+* Keycloak refuses or does not advertise PKCS12 as a supported realm `java-keystore` format.
+* Keycloak refuses PKCS12 for secret/symmetric key entries.
+* Keycloak server HTTPS defaults to BCFKS when `--fips-mode=strict`.
+* `config-keystore` and keystore vault do not silently use PKCS12 with SunJCE/SUN crypto services in a strict-mode compliance path.
+
+== References
+
+NIST/government FIPS authority:
+
+* https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.140-2.pdf[FIPS 140-2: Security Requirements for Cryptographic Modules]
+* https://csrc.nist.gov/CSRC/media//Publications/fips/140/2/final/documents/fips1402annexa.pdf[FIPS 140-2 Annex A: Approved Security Functions]
+* https://csrc.nist.gov/CSRC/media//Publications/fips/140/2/final/documents/fips1402annexd.pdf[FIPS 140-2 Annex D: Approved Key Establishment Techniques]
+* https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validation-Program/documents/fips140-2/FIPS1402IG.pdf[FIPS 140-2 Implementation Guidance]
+* https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf[FIPS 180-4: Secure Hash Standard]
+* https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.198-1.pdf[FIPS 198-1: The Keyed-Hash Message Authentication Code]
+* https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-131Ar2.pdf[SP 800-131A Rev. 2: Transitioning the Use of Cryptographic Algorithms and Key Lengths]
+* https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf[SP 800-132: Recommendation for Password-Based Key Derivation]
+
+Local Keycloak implementation evidence:
+
+* `.ai/reports/FIPS-140-2-support-analysis.md`
+* `.ai/reports/FIPS-140-3-support-analysis.md`
+* `.ai/reports/fips_algorithms_and_ciphers.txt`
+* `.ai/reports/fips_crypto_debug_raw.log`
+* `.ai/reports/fips_instantiable_crypto.log`
+* `docs/guides/server/fips.adoc`
+* `crypto/fips1402/src/main/java/org/keycloak/crypto/fips/FIPS1402Provider.java`
+* `crypto/fips1402/src/main/java/org/keycloak/crypto/fips/Fips1402StrictCryptoProvider.java`
+* `crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/FIPS1402KeystoreTypesTest.java`
+* `crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/FIPS1402SslTest.java`
